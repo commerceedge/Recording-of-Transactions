@@ -16899,6 +16899,37 @@ style='font-size:14.0pt;font-family:"Arial",sans-serif'>   </span></b></p>
 
 </div>
 
+	  <!-- JS from earlier -->
+  <script>
+  window.addEventListener("DOMContentLoaded", function () {
+    const ps = document.querySelectorAll("p");
+    ps.forEach(p => {
+      const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue.includes("•")) {
+          const span = document.createElement("span");
+          span.setAttribute("aria-hidden", "true");
+          span.textContent = "•";
+
+          const parts = node.nodeValue.split("•");
+          const fragment = document.createDocumentFragment();
+          parts.forEach((part, i) => {
+            if (i > 0) fragment.appendChild(span.cloneNode(true));
+            fragment.appendChild(document.createTextNode(part));
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+        }
+      }
+    });
+
+    document.querySelectorAll("div.footer").forEach(div => {
+      div.setAttribute("aria-hidden", "true");
+    });
+  });
+  </script>
+
 </body>
 
 </html>
