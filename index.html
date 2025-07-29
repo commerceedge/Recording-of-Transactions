@@ -1,48 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>TTS Bullet Test</title>
-</head>
-<body>
-  <p>• in great dread of<br>
-  • counted on<br>
-  • thumbed at the edges<br>
-  • in unison<br>
-  • a great bustle<br>
-  • reproach ourselves with</p>
+<p>
+  <span aria-hidden="true" role="presentation">•</span> in great dread of<br />
+  <span aria-hidden="true" role="presentation">•</span> counted on<br />
+  <span aria-hidden="true" role="presentation">•</span> thumbed at the edges<br />
+  <span aria-hidden="true" role="presentation">•</span> in unison<br />
+  <span aria-hidden="true" role="presentation">•</span> a great bustle<br />
+  <span aria-hidden="true" role="presentation">•</span> reproach ourselves with
+</p>
 
-  <div class="footer">1 of N</div>
+<div class="footer" aria-hidden="true" role="presentation">1 of N</div>
 
-  <!-- JS from earlier -->
-  <script>
-  window.addEventListener("DOMContentLoaded", function () {
-    const ps = document.querySelectorAll("p");
-    ps.forEach(p => {
-      const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null, false);
-      let node;
-      while ((node = walker.nextNode())) {
-        if (node.nodeValue.includes("•")) {
-          const span = document.createElement("span");
-          span.setAttribute("aria-hidden", "true");
-          span.textContent = "•";
-
-          const parts = node.nodeValue.split("•");
-          const fragment = document.createDocumentFragment();
-          parts.forEach((part, i) => {
-            if (i > 0) fragment.appendChild(span.cloneNode(true));
-            fragment.appendChild(document.createTextNode(part));
-          });
-
-          node.parentNode.replaceChild(fragment, node);
-        }
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+  // Fix bullets inside <p>
+  document.querySelectorAll("p").forEach(p => {
+    const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue.includes("•")) {
+        const parts = node.nodeValue.split("•");
+        const fragment = document.createDocumentFragment();
+        parts.forEach((part, i) => {
+          if (i > 0) {
+            const span = document.createElement("span");
+            span.setAttribute("aria-hidden", "true");
+            span.setAttribute("role", "presentation");
+            span.textContent = "•";
+            fragment.appendChild(span);
+          }
+          fragment.appendChild(document.createTextNode(part));
+        });
+        node.parentNode.replaceChild(fragment, node);
       }
-    });
-
-    document.querySelectorAll("div.footer").forEach(div => {
-      div.setAttribute("aria-hidden", "true");
-    });
+    }
   });
-  </script>
-</body>
-</html>
+
+  // Hide footer from TTS
+  document.querySelectorAll(".footer").forEach(div => {
+    div.setAttribute("aria-hidden", "true");
+    div.setAttribute("role", "presentation");
+  });
+});
+</script>
